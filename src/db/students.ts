@@ -1,4 +1,4 @@
-import { Student } from "../types/Student";
+import { Student } from "../entities/Student";
 
 const students: Student[] = [
   {

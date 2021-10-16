@@ -1,10 +1,21 @@
 import { Joi } from "celebrate";
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
-export interface Student {
+@Entity()
+export class Student {
+  @PrimaryGeneratedColumn()
   id?: number;
+
+  @Column()
   name: string;
+
+  @Column()
   birth: Date;
+
+  @Column()
   email: string;
+
+  @Column()
   city: string;
 }
 
