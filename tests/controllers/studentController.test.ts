@@ -1,6 +1,35 @@
 import app from "..";
 import supertest from "supertest";
 
+jest.mock("../../src/db/students", () => {
+  return {
+    addStudent: Promise.resolve({
+      id: 1,
+      name: "John Doe",
+      email: "john.doe@example.com",
+      city: "Belo Horizonte",
+      birth: new Date("11/13/1999"),
+    }),
+    getStudents: Promise.resolve([
+      {
+        id: 1,
+        name: "John Doe",
+        email: "john.doe@example.com",
+        city: "Belo Horizonte",
+        birth: new Date("11/13/1999"),
+      },
+    ]),
+    updateStudent: Promise.resolve({
+      id: 1,
+      name: "John Doe",
+      email: "john.doe@example.com",
+      city: "Belo Horizonte",
+      birth: new Date("11/13/1999"),
+    }),
+    deleteStudent: Promise.resolve(),
+  };
+});
+
 describe("Test student requests", () => {
   it("should return the example student", async () => {
     await supertest(app)
@@ -58,7 +87,7 @@ describe("Test student requests", () => {
       );
   });
 
-  it("should update the first student", async () => {
+  it("should delete the first student", async () => {
     const student = {
       id: 1,
       name: "Aylton",

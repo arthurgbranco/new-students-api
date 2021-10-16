@@ -1,47 +1,42 @@
-import { getConnection } from "typeorm";
 import { Student } from "../entities/Student";
-
-
-const students: Student[] = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
-    city: "Belo Horizonte",
-    birth: new Date("11/13/1999"),
-  },
-];
+import { getConnection } from "typeorm";
 
 /**
  * Add new student to list
  * @param student New student
  * @returns new student
  */
-function addStudent(student: Student) {
-  const newStudent = {
-    id: students.length ? students[students.length - 1].id! + 1 : 1,
-    ...student,
-  };
-  students.push(Object.freeze(newStudent));
-  return Promise.resolve(newStudent);
-}
+const addStudent = async (student: Student) => {
+  const newStudent = new Student(student);
+  newStudent.name = student.name;
+  newStudent.email = student.email;
+  newStudent.city = student.city;
+  newStudent.birth = student.birth;
+
+  const repository = getConnection().getRepository(Student);
+  const createdStudent = await repository.save(newStudent);
+
+  return createdStudent;
+};
 
 /**
  * Returns student list
  * @returns Students
  */
-const getStudents = () => getConnection().getRepository{Student}.find();
+const getStudents = () => getConnection().getRepository(Student).find();
 
-const updateStudent = (id: number, student: Student) => {
-  const index = students.findIndex((s) => s.id === id);
-  students[index] = { ...students[index], ...student };
-  return Promise.resolve();
+const updateStudent = async (id: number, student: Student) => {
+  await getConnection().getRepository(Student).update(id, student);
+
+  const updatedStudent = await getConnection()
+    .getRepository(Student)
+    .findOne(id);
+
+  return updatedStudent;
 };
 
-const deleteStudent = (id: number) => {
-  const index = students.findIndex((s) => s.id === id);
-  students.splice(index, 1);
-  return Promise.resolve();
+const deleteStudent = async (id: number) => {
+  await getConnection().getRepository(Student).delete(id);
 };
 
 export { addStudent, getStudents, updateStudent, deleteStudent };
