@@ -1,4 +1,6 @@
+import { getConnection } from "typeorm";
 import { Student } from "../entities/Student";
+
 
 const students: Student[] = [
   {
@@ -28,7 +30,7 @@ function addStudent(student: Student) {
  * Returns student list
  * @returns Students
  */
-const getStudents = () => Promise.resolve(Object.freeze([...students]));
+const getStudents = () => getConnection().getRepository{Student}.find();
 
 const updateStudent = (id: number, student: Student) => {
   const index = students.findIndex((s) => s.id === id);
