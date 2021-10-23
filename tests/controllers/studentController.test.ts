@@ -2,31 +2,37 @@ import app from "..";
 import supertest from "supertest";
 
 jest.mock("../../src/db/students", () => {
+  const originalModule = jest.requireActual("../../src/db/students");
+
   return {
-    addStudent: Promise.resolve({
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@example.com",
-      city: "Belo Horizonte",
-      birth: new Date("11/13/1999"),
+    _esModule: true,
+    ...originalModule,
+    getStudents: jest.fn(() => {
+      return Promise.resolve([
+        {
+          id: 1,
+          name: "John Doe",
+          email: "john.doe@example.com",
+          city: "Belo Horizonte",
+          birth: new Date("11/13/1999"),
+        },
+      ]);
     }),
-    getStudents: Promise.resolve([
-      {
-        id: 1,
-        name: "John Doe",
-        email: "john.doe@example.com",
+    addStudent: jest.fn(() => {
+      return Promise.resolve({
+        id: 2,
+        name: "John Doe 2",
+        email: "john.doe.2@example.com",
         city: "Belo Horizonte",
-        birth: new Date("11/13/1999"),
-      },
-    ]),
-    updateStudent: Promise.resolve({
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@example.com",
-      city: "Belo Horizonte",
-      birth: new Date("11/13/1999"),
+        birth: new Date("11/13/1999").toISOString(),
+      });
     }),
-    deleteStudent: Promise.resolve(),
+    updateStudent: jest.fn(() => {
+      return Promise.resolve();
+    }),
+    deleteStudent: jest.fn(() => {
+      return Promise.resolve();
+    }),
   };
 });
 
@@ -62,7 +68,7 @@ describe("Test student requests", () => {
       .then((res) => expect(res.body).toMatchObject({ id: 2, ...newStudent }));
   });
 
-  it("should update the first student", async () => {
+  it("should update a student", async () => {
     const newStudent = {
       name: "Aylton",
     };
@@ -72,38 +78,12 @@ describe("Test student requests", () => {
       .send(newStudent)
       .expect(200)
       .then((res) => expect(res.body).toBe("ok"));
-
-    await supertest(app)
-      .get("/students")
-      .expect(200)
-      .then((res) =>
-        expect(res.body[0]).toMatchObject({
-          id: 1,
-          name: "Aylton",
-          email: "john.doe@example.com",
-          city: "Belo Horizonte",
-          birth: new Date("11/13/1999").toISOString(),
-        })
-      );
   });
 
-  it("should delete the first student", async () => {
-    const student = {
-      id: 1,
-      name: "Aylton",
-      email: "john.doe@example.com",
-      city: "Belo Horizonte",
-      birth: new Date("11/13/1999").toISOString(),
-    };
-
+  it("should delete a student", async () => {
     await supertest(app)
       .delete(`/students/${1}`)
       .expect(200)
       .then((res) => expect(res.body).toBe("ok"));
-
-    await supertest(app)
-      .get("/students")
-      .expect(200)
-      .then((res) => expect(res.body).not.toContain(student));
   });
 });
