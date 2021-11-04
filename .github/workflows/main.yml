@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v2
       - name: Install dependencies
         run: npm install
@@ -18,5 +18,13 @@ jobs:
         run: npm run test
       - name: Build application
         run: npm run build
-      - name: List files
-        run: ls dist
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Heroku deploy
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "newstudentapi"
+          heroku_email: "agbranco@sga.pucminas.br"
+          usedocker: true
