@@ -33,6 +33,5 @@ jobs:
           usedocker: true
           docker_build_args: |
             NODE_ENV
-            SECRET_KEY
         env:
           NODE_ENV: production
