@@ -20,7 +20,7 @@ jobs:
         run: npm run build
   deploy:
     runs-on: ubuntu-latest
-    steps:
+    steps:  
       - name: Heroku deploy
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
@@ -28,3 +28,8 @@ jobs:
           heroku_app_name: "newstudentapi"
           heroku_email: "agbranco@sga.pucminas.br"
           usedocker: true
+          docker_build_args: |
+            NODE_ENV
+            SECRET_KEY
+        env:
+          NODE_ENV: production
